@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/raffaele-abramini/ecco-proxy/issues"
   },
-  "homepage": "https://github.com/raffaele-abramini/ecco-proxy#readme"
+  "homepage": "https://github.com/raffaele-abramini/ecco-proxy#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^4.1.5"
+  }
 }
