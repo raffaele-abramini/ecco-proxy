@@ -7,7 +7,7 @@ A helper to proxy object in JS.
 EccoProxy allows you to interact with existing object. You'll be able to:
 - 🚀 trigger side effects on method and property calls
 - 🎸 manipulate methods' arguments
-- 🥾overwrite methods and properties 
+- 🥾 overwrite methods and properties 
 
 ## Examples
 
