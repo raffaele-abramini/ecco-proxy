@@ -2,6 +2,13 @@
 
 A helper to proxy object in JS.
 
+## Intro
+
+EccoProxy allows you to interact with existing object. You'll be able to:
+- 🚀 trigger side effects on method and property calls
+- 🎸 manipulate methods' arguments
+- 🥾overwrite methods and properties 
+
 ## Examples
 
 Let's imagine you are using a logging library and you want to make sure that
@@ -15,7 +22,7 @@ import { logLibrary } from "logLibrary";
 
 const proxiedLogLibrary = EccoProxy(logLibrary, {
   log: (logs, originalMethod) => {
-    // invoke side effects
+    // trigger side effects
     shipToServer(logs);
     
     // manipulate arguments
