@@ -1,0 +1,32 @@
+import { ProxiedMethod, ProxiedProperty } from "~EccoProxy.definitions";
+
+export const EccoProxy = <T extends object>(
+  objectToProxy: T,
+  customHandlers: Partial<
+    Record<keyof T, ProxiedMethod<T> | ProxiedProperty<T>>
+  >
+) => {
+  return new Proxy(objectToProxy, {
+    get: function (target, prop, receiver) {
+      const customHandler = customHandlers[prop];
+
+      if (typeof target[prop] === "function") {
+        if (customHandler) {
+          return (...args) => {
+            return customHandler(
+              args,
+              Reflect.get(target, prop, receiver),
+              receiver
+            );
+          };
+        }
+        return Reflect.get(target, prop, receiver);
+      } else {
+        if (customHandler) {
+          return customHandler(target[prop], receiver);
+        }
+        return target[prop];
+      }
+    },
+  });
+};
