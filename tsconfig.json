@@ -1,6 +1,12 @@
 {
   "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
     "baseUrl": "./src",
+    "declaration": true,
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
     "paths": {
       "~*": ["./*"]
     },
@@ -10,7 +16,7 @@
       "scripthost",
       "es2015.proxy",
       "es2015.reflect"
-    ]
+    ],
   },
   "include": ["src/**/*"]
 }

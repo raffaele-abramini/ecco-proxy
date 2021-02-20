@@ -7,12 +7,12 @@ export const EccoProxy = <T extends object>(
   >
 ) => {
   return new Proxy(objectToProxy, {
-    get: function (target, prop, receiver) {
+    get: function (target, prop: keyof T, receiver) {
       const customHandler = customHandlers[prop];
 
       if (typeof target[prop] === "function") {
         if (customHandler) {
-          return (...args) => {
+          return (...args: any[]) => {
             return customHandler(
               args,
               Reflect.get(target, prop, receiver),
@@ -23,7 +23,7 @@ export const EccoProxy = <T extends object>(
         return Reflect.get(target, prop, receiver);
       } else {
         if (customHandler) {
-          return customHandler(target[prop], receiver);
+          return (customHandler as ProxiedProperty<T>)(target[prop], receiver);
         }
         return target[prop];
       }
