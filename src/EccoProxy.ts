@@ -3,7 +3,11 @@ import { ProxiedMethod, ProxiedProperty } from "~EccoProxy.definitions";
 export const EccoProxy = <T extends object>(
   objectToProxy: T,
   customHandlers: Partial<
-    Record<keyof T, ProxiedMethod<T> | ProxiedProperty<T>>
+    {
+      [P in keyof T]: T[P] extends Function
+        ? ProxiedMethod<T>
+        : ProxiedProperty<T>;
+    }
   >
 ) => {
   return new Proxy(objectToProxy, {

@@ -1,10 +1,10 @@
-export type ProxiedMethod<T extends object> = (
+export type ProxiedMethod<T = any> = (
   originalArgs: any[],
   originalMethod: Function,
   originalObject: T
 ) => any;
 
-export type ProxiedProperty<T extends object> = (
+export type ProxiedProperty<T extends object = any> = (
   originalProperty: any,
   originalObject: T
 ) => any;
