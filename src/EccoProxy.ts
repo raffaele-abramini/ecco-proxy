@@ -1,4 +1,5 @@
-import { ProxiedMethod, ProxiedProperty } from "~EccoProxy.definitions";
+// noinspection ES6PreferShortImport
+import { ProxiedMethod, ProxiedProperty } from "./EccoProxy.definitions";
 
 export const EccoProxy = <T extends object>(
   objectToProxy: T,
