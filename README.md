@@ -9,6 +9,8 @@ EccoProxy allows you to interact with existing object. You'll be able to:
 - 🎸 manipulate methods' arguments
 - 🥾 overwrite methods and properties 
 
+Here's a [sandbox](https://codesandbox.io/s/ecco-proxy-playground-rghky?file=/src/index.ts) to play with.
+
 ## Examples
 
 Let's imagine you are using a logging library and you want to make sure that
