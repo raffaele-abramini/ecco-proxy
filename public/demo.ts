@@ -12,21 +12,6 @@ const TestObj = {
   },
 };
 
-const customH = {
-  newMethod: {
-    type: HandlerType.method,
-    handler: (originalArgs, originalMethod, originalObject) => {
-      console.log(originalArgs);
-    },
-  },
-  newProperty: {
-    type: HandlerType.property,
-    handler: () => {
-      return "cane";
-    },
-  },
-};
-
 const p = EccoProxy(
   TestObj,
   {
@@ -38,7 +23,18 @@ const p = EccoProxy(
       return String(originalProperty);
     },
   },
-  customH
+  {
+    doSomething: {
+      asMethod: (originalArgs, originalMethod, originalObject) => {
+        console.log(originalArgs);
+      },
+    },
+    name: {
+      asProperty: () => {
+        return "cane";
+      },
+    },
+  }
 );
 
 p.addListener(1, 2, 3);
@@ -46,5 +42,5 @@ console.log(p.isActive);
 console.log(p.isOnline);
 p.logSomething(2, 23, 4);
 
-p.newMethod(1, 2, 3);
-console.log(p.newProperty);
+p.doSomething(1, 2, 3);
+console.log(p.name);

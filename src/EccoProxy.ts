@@ -1,38 +1,30 @@
 // noinspection ES6PreferShortImport
 import {
-  HandlerType,
-  ProxiedMethod,
+  CustomHandlersObject,
+  ProxiedHandlersObject,
   ProxiedProperty,
 } from "./EccoProxy.definitions";
 
-export const EccoProxy = <
-  T extends object,
-  M extends Partial<{
-    [a: string]: {
-      type: HandlerType;
-      handler: ProxiedMethod | ProxiedProperty;
-    };
-  }>
->(
+export const EccoProxy = <T extends object, M extends CustomHandlersObject>(
   objectToProxy: T,
-  proxiedHandlers: Partial<
-    {
-      [P in keyof T]: T[P] extends Function
-        ? ProxiedMethod<T>
-        : ProxiedProperty<T>;
-    }
-  >,
-  customHandlers: M = {} as any
+  proxiedHandlers: ProxiedHandlersObject<T>,
+  customHandlers?: M
 ): T & Partial<{ [A in keyof M]: any }> => {
   return new Proxy(objectToProxy, {
     get: function (target, prop: keyof T, receiver) {
       const originalHandler = target[prop];
+
+      // If requested handler exists on the original object
       if (originalHandler) {
         const proxiedHandler = proxiedHandlers[prop];
 
+        // If it's a function
         if (typeof originalHandler === "function") {
+          // If it has been proxied by user
           if (proxiedHandler) {
+            // return a function that..
             return (...args: any[]) => {
+              // ..returns the proxied method with args
               return proxiedHandler(
                 args,
                 Reflect.get(target, prop, receiver),
@@ -40,34 +32,39 @@ export const EccoProxy = <
               );
             };
           }
+          // if method hasn't been proxied by user, just return the original one.
           return Reflect.get(target, prop, receiver);
         } else {
+          // if handler is a property
+          // and it has customised by user
           if (proxiedHandler) {
+            // invoke the proxied property with arguments
             return (proxiedHandler as ProxiedProperty<T>)(
               originalHandler,
               receiver
             );
           }
+          // otherwise just return the original prop
           return target[prop];
         }
       }
 
-      const customHandler = customHandlers[prop as keyof typeof customHandlers];
+      // If the requested method doesn't exist on the original object, check for
+      // custom handlers.
+      const customHandler =
+        customHandlers && customHandlers[prop as keyof typeof customHandlers];
 
       if (customHandler) {
-        if (customHandler.type === HandlerType.method) {
+        // if a custom handler has been specified as method
+        if (customHandler.asMethod) {
+          // return a function that..
           return (...args: any[]) => {
-            return customHandler.handler(
-              args,
-              Reflect.get(target, prop, receiver),
-              receiver
-            );
+            // ..returns the custom method with args
+            return customHandler.asMethod!(args, receiver);
           };
-        } else if (customHandler.type === HandlerType.property) {
-          return (customHandler.handler as ProxiedProperty<T>)(
-            originalHandler,
-            receiver
-          );
+        } else if (customHandler.asProperty) {
+          // else invoke the custom property
+          return customHandler.asProperty(receiver);
         }
         throw Error(`Invalid custom handler type for '${prop}'`);
       }
