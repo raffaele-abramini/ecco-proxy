@@ -28,5 +28,8 @@
     "parcel-bundler": "^1.12.4",
     "prettier": "^2.2.1",
     "typescript": "^4.1.5"
+  },
+  "jest": {
+    "clearMocks": true
   }
 }

@@ -1,16 +1,17 @@
 import { EccoProxy } from "../src";
 
-const dummyObject = {
+const dummyObject = () => ({
   booleanValue: true,
+  textualProperty: "hi",
   method: (...args: any) => {
     return "method " + args.join(" ");
   },
-};
+});
 
-describe("proxies properties", () => {
+describe("Get: proxies existing properties", () => {
   let dummyProxy;
   it("correctly proxies a prop", () => {
-    dummyProxy = EccoProxy(dummyObject, {
+    dummyProxy = EccoProxy(dummyObject(), {
       booleanValue: (originalProperty) => {
         return String(originalProperty) + " proxied, yes!";
       },
@@ -19,20 +20,20 @@ describe("proxies properties", () => {
   });
 
   it("returns a prop that's not proxied", () => {
-    dummyProxy = EccoProxy(dummyObject, {});
+    dummyProxy = EccoProxy(dummyObject(), {});
     expect(dummyProxy.booleanValue).toEqual(true);
   });
 });
 
-describe("ProxyMethods", () => {
+describe("Get: proxies existing methods", () => {
   let dummyProxy;
 
   it("correctly invokes a method that's not proxied", () => {
-    dummyProxy = EccoProxy(dummyObject, {});
+    dummyProxy = EccoProxy(dummyObject(), {});
     expect(dummyProxy.method(1, 2, 3)).toEqual("method 1 2 3");
   });
   it("proxies a method", () => {
-    dummyProxy = EccoProxy(dummyObject, {
+    dummyProxy = EccoProxy(dummyObject(), {
       method: (originalArgs, originalMethod) => {
         return originalMethod(...originalArgs.map((n) => n * 2));
       },
@@ -41,15 +42,15 @@ describe("ProxyMethods", () => {
   });
 });
 
-describe("Invoke custom methods", () => {
+describe("Get: proxies custom methods", () => {
   const dummyProxy = EccoProxy(
-    dummyObject,
-    {},
+    dummyObject(),
     {
       doSomething: {
         asMethod: (args) => args,
       },
-    }
+    },
+    {}
   );
 
   it("correctly invokes a method that's not proxied", () => {
@@ -64,16 +65,12 @@ describe("Invoke custom methods", () => {
   });
 });
 
-describe("Invoke custom properties", () => {
-  const dummyProxy = EccoProxy(
-    dummyObject,
-    {},
-    {
-      name: {
-        asProperty: () => "bubu",
-      },
-    }
-  );
+describe("Get: Proxies custom properties", () => {
+  const dummyProxy = EccoProxy(dummyObject(), {
+    name: {
+      asProperty: () => "bubu",
+    },
+  });
 
   it("correctly invokes a method that's not proxied", () => {
     expect(dummyProxy.name).toEqual("bubu");
@@ -84,5 +81,60 @@ describe("Invoke custom properties", () => {
       // @ts-ignore line
       dummyProxy.surname
     ).toBeUndefined();
+  });
+});
+
+describe("Set: proxies custom properties", () => {
+  let dummyProxy;
+  let spy = jest.fn();
+  it("correctly invokes the proxied setter", () => {
+    dummyProxy = EccoProxy(
+      dummyObject(),
+      {},
+      {
+        textualProperty: (value, setValue) => {
+          spy(value);
+          setValue("intercepted - " + value);
+          return true;
+        },
+      }
+    );
+
+    dummyProxy.textualProperty = "new value";
+
+    expect(spy).toHaveBeenCalledWith("new value");
+    expect(dummyProxy.textualProperty).toEqual("intercepted - new value");
+  });
+
+  it("correctly invokes the proxied setter that prevents the set action", () => {
+    dummyProxy = EccoProxy(
+      dummyObject(),
+      {},
+      {
+        textualProperty: () => {
+          return false;
+        },
+      }
+    );
+
+    dummyProxy.textualProperty = "a different text";
+
+    expect(dummyProxy.textualProperty).toEqual("hi");
+  });
+
+  it("correctly set non-proxied properties", () => {
+    dummyProxy = EccoProxy(dummyObject(), {}, {});
+
+    dummyProxy.textualProperty = "hello";
+
+    expect(dummyProxy.textualProperty).toEqual("hello");
+  });
+
+  it("correctly set non-proxied properties", () => {
+    dummyProxy = EccoProxy(dummyObject(), {}, {});
+
+    dummyProxy.method = () => "hello";
+
+    expect(dummyProxy.method()).toEqual("hello");
   });
 });

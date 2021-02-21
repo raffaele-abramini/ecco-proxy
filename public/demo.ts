@@ -22,8 +22,6 @@ const p = EccoProxy(
     isActive: (originalProperty) => {
       return String(originalProperty);
     },
-  },
-  {
     doSomething: {
       asMethod: (originalArgs) => {
         console.log(originalArgs);

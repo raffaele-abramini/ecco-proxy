@@ -20,7 +20,7 @@ export enum asHandlerType {
   asProperty = "asProperty",
 }
 
-export type ProxiedHandlersObject<T extends object> = Partial<
+export type ProxiedGetHandlersObject<T extends object> = Partial<
   {
     [P in keyof T]: T[P] extends Function
       ? ProxiedMethod<T>
