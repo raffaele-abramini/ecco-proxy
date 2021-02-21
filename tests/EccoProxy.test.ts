@@ -40,3 +40,49 @@ describe("ProxyMethods", () => {
     expect(dummyProxy.method(1, 2, 3)).toEqual("method 2 4 6");
   });
 });
+
+describe("Invoke custom methods", () => {
+  const dummyProxy = EccoProxy(
+    dummyObject,
+    {},
+    {
+      doSomething: {
+        asMethod: (args) => args,
+      },
+    }
+  );
+
+  it("correctly invokes a method that's not proxied", () => {
+    expect(dummyProxy.doSomething(1, true, "a")).toEqual([1, true, "a"]);
+  });
+
+  it("still throws for non-existing, not-added methods", () => {
+    expect(() => {
+      // @ts-ignore line
+      dummyProxy.doSomethingElse();
+    }).toThrowError();
+  });
+});
+
+describe("Invoke custom properties", () => {
+  const dummyProxy = EccoProxy(
+    dummyObject,
+    {},
+    {
+      name: {
+        asProperty: () => "bubu",
+      },
+    }
+  );
+
+  it("correctly invokes a method that's not proxied", () => {
+    expect(dummyProxy.name).toEqual("bubu");
+  });
+
+  it("returns undefined for non-existing, not-added properties", () => {
+    expect(
+      // @ts-ignore line
+      dummyProxy.surname
+    ).toBeUndefined();
+  });
+});

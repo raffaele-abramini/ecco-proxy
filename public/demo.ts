@@ -1,5 +1,4 @@
 import { EccoProxy } from "../src";
-import { HandlerType } from "../src/EccoProxy.definitions";
 
 const TestObj = {
   isActive: false,
@@ -25,7 +24,7 @@ const p = EccoProxy(
   },
   {
     doSomething: {
-      asMethod: (originalArgs, originalMethod, originalObject) => {
+      asMethod: (originalArgs) => {
         console.log(originalArgs);
       },
     },
