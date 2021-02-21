@@ -42,48 +42,6 @@ describe("Get: proxies existing methods", () => {
   });
 });
 
-describe("Get: proxies custom methods", () => {
-  const dummyProxy = EccoProxy(
-    dummyObject(),
-    {
-      doSomething: {
-        asMethod: (args) => args,
-      },
-    },
-    {}
-  );
-
-  it("correctly invokes a method that's not proxied", () => {
-    expect(dummyProxy.doSomething(1, true, "a")).toEqual([1, true, "a"]);
-  });
-
-  it("still throws for non-existing, not-added methods", () => {
-    expect(() => {
-      // @ts-ignore line
-      dummyProxy.doSomethingElse();
-    }).toThrowError();
-  });
-});
-
-describe("Get: Proxies custom properties", () => {
-  const dummyProxy = EccoProxy(dummyObject(), {
-    name: {
-      asProperty: () => "bubu",
-    },
-  });
-
-  it("correctly invokes a method that's not proxied", () => {
-    expect(dummyProxy.name).toEqual("bubu");
-  });
-
-  it("returns undefined for non-existing, not-added properties", () => {
-    expect(
-      // @ts-ignore line
-      dummyProxy.surname
-    ).toBeUndefined();
-  });
-});
-
 describe("Set: proxies custom properties", () => {
   let dummyProxy;
   let spy = jest.fn();
