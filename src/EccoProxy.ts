@@ -3,12 +3,14 @@ import {
   CustomHandlersObject,
   ProxiedHandlersObject,
   ProxiedProperty,
+  SetProxiedHandlersObject,
 } from "./EccoProxy.definitions";
 
 export const EccoProxy = <T extends object, M extends CustomHandlersObject>(
   objectToProxy: T,
   proxiedHandlers: ProxiedHandlersObject<T>,
-  customHandlers?: M
+  customHandlers?: M,
+  proxiedSetHandlers?: SetProxiedHandlersObject<T>
 ): T & Partial<{ [A in keyof M]: any }> => {
   return new Proxy(objectToProxy, {
     get: function (target, prop: keyof T, receiver) {
@@ -68,6 +70,19 @@ export const EccoProxy = <T extends object, M extends CustomHandlersObject>(
         }
         throw Error(`Invalid custom handler type for '${prop}'`);
       }
+    },
+    set(target: T, p: PropertyKey, value: any, receiver: any): boolean {
+      const proxiedSetHandler =
+        proxiedSetHandlers &&
+        proxiedSetHandlers[p as keyof SetProxiedHandlersObject<T>];
+      if (proxiedSetHandler) {
+        proxiedSetHandler(value, (newVal = value) => {
+          target[p as keyof T] = newVal;
+        });
+      } else {
+        target[p as keyof T] = value;
+      }
+      return true;
     },
   });
 };

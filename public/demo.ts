@@ -9,6 +9,7 @@ const TestObj = {
   addListener: (...args: any) => {
     console.log("bubu", ...args);
   },
+  somethingElse: true,
 };
 
 const p = EccoProxy(
@@ -32,6 +33,12 @@ const p = EccoProxy(
       asProperty: () => {
         return "cane";
       },
+    },
+  },
+  {
+    somethingElse: (newValue, setVal) => {
+      setVal(String(newValue) + " oppla");
+      return true;
     },
   }
 );
@@ -68,3 +75,7 @@ const proxiedConsole = EccoProxy(window.console, {
 window.console = proxiedConsole;
 
 console.error("Here's the first error. Try to add more via console.error");
+
+p.somethingElse = false;
+
+console.error(p.somethingElse);

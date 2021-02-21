@@ -37,3 +37,14 @@ export type CustomHandlersObject = Partial<{
     }
   >;
 }>;
+
+export type SetProxyHandler = (
+  value: any,
+  setValue: (customValue: any) => void
+) => boolean;
+
+export type SetProxiedHandlersObject<T extends object> = Partial<
+  {
+    [P in keyof T]: SetProxyHandler;
+  }
+>;
