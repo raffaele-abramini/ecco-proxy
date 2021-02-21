@@ -1,16 +1,15 @@
 // noinspection ES6PreferShortImport
 import {
-  CustomHandlersObject,
   ProxiedGetHandlersObject,
   ProxiedProperty,
   SetProxiedHandlersObject,
 } from "./EccoProxy.definitions";
 
-export const EccoProxy = <T extends object, M extends CustomHandlersObject>(
+export const EccoProxy = <T extends object>(
   objectToProxy: T,
-  proxiedGetHandlers: ProxiedGetHandlersObject<T> | M,
+  proxiedGetHandlers: ProxiedGetHandlersObject<T>,
   proxiedSetHandlers?: SetProxiedHandlersObject<T>
-): T & Partial<{ [A in keyof M]: any }> => {
+): T => {
   return new Proxy(objectToProxy, {
     get: function (target, prop: keyof T, receiver) {
       const originalHandler = target[prop];
@@ -50,27 +49,6 @@ export const EccoProxy = <T extends object, M extends CustomHandlersObject>(
           // otherwise just return the original prop
           return target[prop];
         }
-      }
-
-      // If the requested method doesn't exist on the original object, check for
-      // custom handlers.
-      const customHandler = (proxiedGetHandlers as M)[
-        prop as keyof typeof proxiedGetHandlers
-      ];
-
-      if (customHandler) {
-        // if a custom handler has been specified as method
-        if (customHandler.asMethod) {
-          // return a function that..
-          return (...args: any[]) => {
-            // ..returns the custom method with args
-            return customHandler.asMethod!(args, receiver);
-          };
-        } else if (customHandler.asProperty) {
-          // else invoke the custom property
-          return customHandler.asProperty(receiver);
-        }
-        throw Error(`Invalid custom handler type for '${prop}'`);
       }
     },
     set(target: T, p: PropertyKey, value: any): boolean {

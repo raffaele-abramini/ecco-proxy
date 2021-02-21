@@ -40,38 +40,56 @@ const proxiedConsole = EccoProxy(window.console, {
 window.console = proxiedConsole
 ````
 
-## Manipulate API of an existing library
+## Dynamically react to property changes
 
-In this example we are adding a new shortcut method to the Client of a dummy library.
-This library exposed my default a triggerEvent method. This method always requires a piece of data that
-doesn't really change.
+Let's imagine you want to know when a property of an object changes, to trigger some side effect.
+Here's how you can do it.
 
-So for our commodity, we are adding a triggerEventWithPredefinedData method that passes an initial piece of data
-to the original method.
 ````typescript
-// in ProxiedClient.ts
 import { EccoProxy } from "ecco-proxy";
-import { MyClient } from "my-library"
 
-const ProxiedClient = EccoProxy(MyClient, {}, {
-    triggerEventWithSecret: {
-        asMethod: (args, MyClient) => {
-            MyClient.triggerEvent(process.env.secret, ...args)
-        }
-    } 
-});
-
-// now just use this module instead of the original when logging stuff
-export { ProxiedClient as MyClient }
-````
-Now in my our files we can import the proxyed library and get our new method:
-````typescript
-// in index.ts
-import { MyClient } from "./proxiedClient"
-
-const doThings = (id, attributes) => {
-    MyClient.triggerEventWithSecret(id, attributes)
+const store = {
+    data: "content"
 };
+
+const proxiedStore = EccoProxy(store, {}, {
+    data: (value, setValue) => {
+        // whenever the store.data gets changed, trigger our custom callback
+        triggerCallback(value);
+
+        // apply the new value
+        setValue(value);
+
+        // return true to indicate success
+        return true;
+    }
+})
+
+export { proxiedStore as store }
 ````
 
-Easy peasy.
+## Prevent certain properties or methods from being changed
+
+Let's say we have an object with some property that we do not want to mutate.
+Here's how to do it
+
+````typescript
+import { EccoProxy } from "ecco-proxy";
+
+const store = {
+  id: "IDXXX"   
+};
+
+const proxiedStore = EccoProxy(store, {}, {
+    id: () => {
+        console.error("You cannot change the ID of a store")
+        
+        // do not set any value
+        
+        // return false to indicate failure
+        return false;
+    }
+})
+
+export { proxiedStore as store }
+````
