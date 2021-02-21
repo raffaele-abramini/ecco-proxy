@@ -43,3 +43,28 @@ p.logSomething(2, 23, 4);
 
 p.doSomething(1, 2, 3);
 console.log(p.name);
+
+const shipToServer = (errors: string[]) => {
+  document.getElementById("errors")!.innerHTML += `${errors
+    .map((a) => `<li>${a}</li>`)
+    .join("")}`;
+};
+const makePretty = (a: string) => `${new Date().toLocaleString()} - ${a}`;
+
+const proxiedConsole = EccoProxy(window.console, {
+  error: (errors, originalMethod) => {
+    // manipulate arguments
+    const prettyErrors = errors.map(makePretty);
+
+    // trigger side effects
+    shipToServer(prettyErrors);
+
+    // let the original library do its stuff, with the manipulated args
+    return originalMethod(...prettyErrors);
+  },
+});
+
+// now just use this module instead of the original when logging stuff
+window.console = proxiedConsole;
+
+console.error("Here's the first error. Try to add more via console.error");
