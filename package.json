@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "preversion": "jest && tsc",
-    "prepublish": "jest && tsc",
+    "preversion": "echo 'version'",
+    "prepublish": "echo 'version'",
     "test": "npx jest --coverage",
     "start": "parcel public/index.html"
   },
