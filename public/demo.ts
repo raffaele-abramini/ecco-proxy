@@ -15,27 +15,17 @@ const TestObj = {
 const p = EccoProxy(
   TestObj,
   {
-    addListener: (originalArgs, originalMethod) => {
-      console.log("cane", ...originalArgs.map(Math.random));
-      return originalMethod(...originalArgs);
+    addListener: (receivedArguments, originalMethod) => {
+      console.log("cane", ...receivedArguments.map(Math.random));
+      return originalMethod(...receivedArguments);
     },
-    isActive: (originalProperty) => {
-      return String(originalProperty);
-    },
-    doSomething: {
-      asMethod: (originalArgs) => {
-        console.log(originalArgs);
-      },
-    },
-    name: {
-      asProperty: () => {
-        return "cane";
-      },
+    isActive: (receivedArguments) => {
+      return String(receivedArguments);
     },
   },
   {
-    somethingElse: (newValue, setVal) => {
-      setVal(String(newValue) + " oppla");
+    somethingElse: (receivedArgument, setVal) => {
+      setVal(String(receivedArgument) + " oppla");
       return true;
     },
   }
@@ -45,9 +35,6 @@ p.addListener(1, 2, 3);
 console.log(p.isActive);
 console.log(p.isOnline);
 p.logSomething(2, 23, 4);
-
-p.doSomething(1, 2, 3);
-console.log(p.name);
 
 const shipToServer = (errors: string[]) => {
   document.getElementById("errors")!.innerHTML += `${errors

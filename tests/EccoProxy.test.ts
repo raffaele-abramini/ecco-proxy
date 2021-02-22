@@ -12,8 +12,8 @@ describe("Get: proxies existing properties", () => {
   let dummyProxy;
   it("correctly proxies a prop", () => {
     dummyProxy = EccoProxy(dummyObject(), {
-      booleanValue: (originalProperty) => {
-        return String(originalProperty) + " proxied, yes!";
+      booleanValue: (receivedValue) => {
+        return String(receivedValue) + " proxied, yes!";
       },
     });
     expect(dummyProxy.booleanValue).toEqual("true proxied, yes!");
@@ -34,8 +34,8 @@ describe("Get: proxies existing methods", () => {
   });
   it("proxies a method", () => {
     dummyProxy = EccoProxy(dummyObject(), {
-      method: (originalArgs, originalMethod) => {
-        return originalMethod(...originalArgs.map((n) => n * 2));
+      method: (receivedArgs, originalMethod) => {
+        return originalMethod(...receivedArgs.map((n) => n * 2));
       },
     });
     expect(dummyProxy.method(1, 2, 3)).toEqual("method 2 4 6");

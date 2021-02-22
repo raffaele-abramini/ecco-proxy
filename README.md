@@ -7,12 +7,39 @@ A helper to proxy object in JS.
 EccoProxy allows you to interact with existing object. You'll be able to:
 - 🚀 trigger side effects on method and property calls
 - 🎸 manipulate methods' arguments
-- 🥾 overwrite methods and properties 
+- 🥾 overwrite methods and properties
+- 📝 validate properties before setting them
 
 Here's a [sandbox](https://codesandbox.io/s/ecco-proxy-playground-rghky?file=/src/index.ts) to play with.
 
-## Examples
+## Setup
+```
+yarn add ecco-proxy
+````
+or
+````
+npm install ecco-proxy
+````
 
+## Usage
+
+
+````typescript
+import { EccoProxy } from "ecco-proxy";
+
+const proxiedObject = EccoProxy(
+    myObject,
+    {
+        methodName: (originalArgs, originalMethod, originalObject) => {},
+        propertyName: (originalArgs, originalObject) => {},
+    },
+    {
+        
+    });
+````
+
+
+## Examples
 
 ### Intercepting and add manipulating 'console' methods
 Let's imagine you want to make sure that the all the logs
@@ -24,12 +51,12 @@ This is how you would do it with EccoProxy:
 import { EccoProxy } from "ecco-proxy";
 
 const proxiedConsole = EccoProxy(window.console, {
-  error: (errors, originalMethod) => {
+  error: (receivedArguments, originalMethod) => {
     // trigger side effects
-    shipToServer(errors);
+    shipToServer(receivedArguments);
     
     // manipulate arguments
-    const prettyErrors = errors.map(makePretty);
+    const prettyErrors = receivedArguments.map(makePretty);
     
     // let the original library do its stuff, with the manipulated args
     return originalMethod(...prettyErrors);
@@ -53,12 +80,43 @@ const store = {
 };
 
 const proxiedStore = EccoProxy(store, {}, {
-    data: (value, setValue) => {
+    data: (receivedValue, setValue) => {
         // whenever the store.data gets changed, trigger our custom callback
-        triggerCallback(value);
+        triggerCallback(receivedValue);
 
         // apply the new value
-        setValue(value);
+        setValue(receivedValue);
+
+        // return true to indicate success
+        return true;
+    }
+})
+
+export { proxiedStore as store }
+````
+
+## Add validation to property set
+
+Let's say we have an object with some property that we do not want to mutate.
+Here's how to do it
+
+````typescript
+import { EccoProxy } from "ecco-proxy";
+
+const store = {
+    maxSize: 100
+};
+
+const proxiedStore = EccoProxy(store, {}, {
+    maxSize: (receivedValue, setValue) => {
+        const number = Number(receivedValue);
+        if (isNaN(receivedValue) || !Number.isInteger(number) || number < 0) {
+            console.error("store.maxSize has to be a integer, positive number")
+            return false;
+        }
+
+        // otherwise set the number
+        setValue();
 
         // return true to indicate success
         return true;

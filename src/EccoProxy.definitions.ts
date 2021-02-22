@@ -1,15 +1,11 @@
 export type ProxiedMethod<T = any> = (
-  originalArgs: any[],
+  receivedArguments: any[],
   originalMethod: Function,
   originalObject: T
 ) => any;
 
 export type ProxiedProperty<T extends object = any> = (
-  originalProperty: any,
-  originalObject: T
-) => any;
-export type CustomMethod<T = any> = (
-  originalArgs: any[],
+  receivedValue: any,
   originalObject: T
 ) => any;
 
@@ -22,7 +18,7 @@ export type ProxiedGetHandlersObject<T extends object> = Partial<
 >;
 
 export type SetProxyHandler = (
-  value: any,
+  receivedValue: any,
   setValue: (customValue: any) => void
 ) => boolean;
 
