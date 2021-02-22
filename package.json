@@ -1,6 +1,6 @@
 {
   "name": "ecco-proxy",
-  "version": "0.0.4",
+  "version": "0.0.5-alpha.3",
   "description": "Helper for proxing objects in JS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
