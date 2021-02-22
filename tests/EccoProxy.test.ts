@@ -30,7 +30,7 @@ describe("Get: proxies existing methods", () => {
 
   it("correctly invokes a method that's not proxied", () => {
     dummyProxy = EccoProxy(dummyObject(), {});
-    expect(dummyProxy.method(1, 2, 3)).toEqual("method 1 2 23");
+    expect(dummyProxy.method(1, 2, 3)).toEqual("method 1 2 3");
   });
   it("proxies a method", () => {
     dummyProxy = EccoProxy(dummyObject(), {
