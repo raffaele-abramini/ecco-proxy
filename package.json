@@ -7,7 +7,7 @@
   "scripts": {
     "preversion": "jest && tsc",
     "prepublish": "jest && tsc",
-    "test": "npx jest",
+    "test": "npx jest --coverage",
     "start": "parcel public/index.html"
   },
   "repository": {

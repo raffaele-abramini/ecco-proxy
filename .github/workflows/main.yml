@@ -21,5 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install and run tests
-        run: npm ci && npm test
+      - name: Install modules
+        run: npm ci
+      - name: Run tests
+        run: npm test
