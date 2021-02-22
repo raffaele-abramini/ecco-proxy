@@ -16,15 +16,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Add .npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
       - name: Install modules
         run: yarn install --prefer-offline
 
       - name: Run tests
         run: yarn validate
-
-      - name: Add .npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 
       - name: Publish
         env:
