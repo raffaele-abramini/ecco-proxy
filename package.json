@@ -1,13 +1,12 @@
 {
   "name": "ecco-proxy",
-  "version": "0.0.4",
+  "version": "0.0.5-alpha.6",
   "description": "Helper for proxing objects in JS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "preversion": "jest && tsc",
-    "prepublish": "jest && tsc",
-    "test": "jest",
+    "validate": "jest && tsc",
+    "test": "npx jest --coverage",
     "start": "parcel public/index.html"
   },
   "repository": {
@@ -28,5 +27,8 @@
     "parcel-bundler": "^1.12.4",
     "prettier": "^2.2.1",
     "typescript": "^4.1.5"
+  },
+  "jest": {
+    "clearMocks": true
   }
 }
