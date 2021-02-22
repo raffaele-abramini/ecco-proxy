@@ -26,4 +26,4 @@ jobs:
       - name: Install modules
         run: yarn install --prefer-offline
       - name: Run tests
-        run: npm test
+        run: yarn validate
